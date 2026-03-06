@@ -1,36 +1,34 @@
 import smtplib
 
-def send_email(subject, message, from_email, to_email, password):
+def send_email(subject, message, sender, receiver, password):
     server = None
+
     try:
-        # Create email content
-        email_message = f"Subject: {subject}\nFrom: {from_email}\nTo: {to_email}\n\n{message}"
+        email = f"Subject: {subject}\n\n{message}"
 
-        # Connect to Gmail SMTP server
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+        server.login(sender, password)
 
-        # Login to email
-        server.login(from_email, password)
+        server.sendmail(sender, receiver, email)
 
-        # Send email
-        server.sendmail(from_email, to_email, email_message)
-
-        print("Email sent successfully!")
+        print("✅ Email sent successfully!")
 
     except Exception as e:
-        print("Error:", e)
+        print("❌ Error sending email:", e)
 
     finally:
-        if server:                                                                                                                                                                                                
+        if server:
             server.quit()
 
 
-# ---- User Input Section ----
-subject = input("Enter subject: ")
-message = input("Enter message: ")
-from_email = input("Enter your email: ")
-to_email = input("Enter receiver email: ")
-password = input("Enter your app password: ")
+# -------- User Input --------
+sender = input("Enter sender email: ")
+receiver = input("Enter receiver email: ")
+password = input("Enter app password: ")
 
-send_email(subject, message, from_email, to_email, password)
+subject = input("Enter subject: ")
+
+print("Enter your message:")
+message = input()
+
+send_email(subject, message, sender, receiver, password)
